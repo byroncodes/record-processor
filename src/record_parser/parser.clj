@@ -1,5 +1,8 @@
 (ns record-parser.parser
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clj-time.core :as clj-time]
+            [clj-time.coerce :as c]
+            [clj-time.format :as f]))
 
 (defn- split-on-newline [raw-records]
   (str/split raw-records #"\n"))
@@ -16,7 +19,7 @@
               (apply #(str/split % #" ") record-vector)))))
 
 (defn map-all-records [record-vectors]
-  (map map-record record-vectors))
+  (mapcat map-record record-vectors))
 
 (defn remove-all-delimiters [raw-records]
   (map remove-delimiter raw-records))
@@ -26,3 +29,10 @@
         remove-all-delimiters (remove-all-delimiters split-on-newline)
         vectorize-records (vectorize-records remove-all-delimiters)]
     (map-all-records vectorize-records)))
+
+(defn sort-records-by-gender [mapped-records]
+  (let [sorted-by-last-name (sort-by :last-name mapped-records)]
+    (sort-by :gender sorted-by-last-name)))
+
+(defn sort-records-by-lastname [mapped-record]
+  (reverse (sort-by :last-name mapped-record)))
