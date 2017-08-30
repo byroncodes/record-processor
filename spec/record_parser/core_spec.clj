@@ -17,4 +17,13 @@
       (should= (c/read-file file-path)
                "second test file contents")
       (io/delete-file file-path)))
+
+  (it "reads raw records from a file and returns the parsed result"
+    (let [file-path "fixtures/test-records.txt"]
+      (should= (first (c/parse-records file-path))
+               {:last-name "Potter"
+                :first-name "Harry"
+                :gender "Male"
+                :favorite-color "Blue"
+                :birthdate "01/05/1982"})))
 )
