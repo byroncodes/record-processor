@@ -5,7 +5,9 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :main record-parser.core
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [clj-time "0.14.0"]]
+                 [clj-time "0.14.0"]
+                 [ring/ring-core "1.5.0"]
+                 [ring/ring-jetty-adapter "1.5.0"]]
   :profiles {:dev {:dependencies [[speclj "3.3.2"]]}}
   :plugins [[speclj "3.3.2"]]
   :test-paths ["spec"])
