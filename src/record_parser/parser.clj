@@ -7,28 +7,28 @@
 (defn- split-on-newline [raw-records]
   (str/split raw-records #"\n"))
 
-(defn- remove-delimiter [raw-record]
-  (str/replace raw-record #"\| " ""))
+(defn- remove-delimiters [raw-record]
+  (-> raw-record
+      (str/replace #"\| " "")
+      (str/replace #"," "")))
 
-(defn vectorize-records [record-string-coll]
-  (partition 1 record-string-coll))
+(defn normalize-records [raw-records]
+  (-> raw-records
+      (remove-delimiters)
+      (split-on-newline)))
 
-(defn map-record [record-vector]
-  (let [record-keys [:last-name :first-name :gender :favorite-color :birthdate]]
-    (vector (zipmap record-keys
-              (apply #(str/split % #" ") record-vector)))))
+(defn build-user-record [record-vector]
+  (zipmap [:last-name :first-name :gender :favorite-color :birthdate]
+          record-vector))
 
-(defn map-all-records [record-vectors]
-  (mapcat map-record record-vectors))
+(defn vectorize-records [raw-records]
+  (let [normalized-records (normalize-records raw-records)]
+    (map #(str/split % #" ") normalized-records)))
 
-(defn remove-all-delimiters [raw-records]
-  (map remove-delimiter raw-records))
-
-(defn map-raw-records [raw-records]
-  (let [split-on-newline (split-on-newline raw-records)
-        remove-all-delimiters (remove-all-delimiters split-on-newline)
-        vectorize-records (vectorize-records remove-all-delimiters)]
-    (map-all-records vectorize-records)))
+(defn build-user-records [raw-records]
+  (let [vectorized-records (vectorize-records raw-records)]
+    (map (fn [record] (build-user-record record))
+         vectorized-records)))
 
 (defn sort-records-by-gender [mapped-records]
   (let [sorted-by-last-name (sort-by :last-name mapped-records)]
