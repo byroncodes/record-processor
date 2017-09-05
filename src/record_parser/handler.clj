@@ -1,7 +1,7 @@
 (ns record-parser.handler
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
             [record-parser.parser :as parser]
             [record-parser.presenter :as presenter]
             [record-parser.core :as core]))
@@ -34,6 +34,10 @@
     (handle-json-response
       (presenter/present-records sorted-records))))
 
+(defn create-record [file-path raw-record]
+  (let [add-newline (spit file-path "\n" :append true)]
+    (spit file-path raw-record :append true)))
+
 (defroutes app-routes
   (GET "/records/gender"
        request
@@ -47,10 +51,15 @@
        request
        (handle-name-records records-filepath))
 
+  (POST "/records"
+        {params :params}
+        (create-record (:file-path params)
+                       (:raw-record params)))
+
   (GET "/" [] {:status 200
                :headers {"Content-Type" "application/javascript"}
                :body  "Hello! I parse and present you with sorted records"})
   (route/not-found "Not Found"))
 
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (wrap-defaults app-routes api-defaults))
