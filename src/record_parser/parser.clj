@@ -29,10 +29,3 @@
   (let [vectorized-records (vectorize-records raw-records)]
     (map (fn [record] (build-user-record record))
          vectorized-records)))
-
-(defn sort-records-by-gender [mapped-records]
-  (let [sorted-by-last-name (sort-by :last-name mapped-records)]
-    (sort-by :gender sorted-by-last-name)))
-
-(defn sort-records-by-lastname [mapped-record]
-  (reverse (sort-by :last-name mapped-record)))

@@ -11,10 +11,19 @@
         parsed-records (parser/build-user-records raw-records)]
     parsed-records))
 
+(defn records-sorted-by-gender [file-path]
+  (let [parsed-records (parse-records file-path)
+        sorted-by-gender (presenter/sort-records-by-gender parsed-records)]
+    (apply println "Sorted By Gender: \n"
+           sorted-by-gender)))
+
+(defn records-sorted-by-name [file-path]
+  (let [parsed-records (parse-records file-path)
+        sorted-by-lastname (presenter/sort-records-by-lastname parsed-records)]
+    (apply println "Sorted By Last Name: \n"
+           (presenter/present-records sorted-by-lastname))))
+
 (defn -main [& args]
-  (let [file-path (first args)
-        parsed-records (parse-records file-path)
-        sorted-by-gender (parser/sort-records-by-gender parsed-records)
-        sorted-by-lastname (parser/sort-records-by-lastname parsed-records)]
-    (apply println "Sorted By Gender: \n" (presenter/present-records sorted-by-gender))
-    (apply println "Sorted By Last Name: \n" (presenter/present-records sorted-by-lastname))))
+  (let [file-path (first args)]
+    (records-sorted-by-gender file-path)
+    (records-sorted-by-name file-path)))

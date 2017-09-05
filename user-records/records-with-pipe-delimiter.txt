@@ -1,0 +1,4 @@
+Potter | Harry | Male | Blue | 01/05/1982
+Granger | Hermione | Female | Green | 12/05/1982
+Weasley | Ron | Male | Green | 10/05/1980
+Weasley | Ginny | Female | Black | 5/05/1985
