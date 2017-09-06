@@ -1,4 +1,4 @@
-(ns record-parser.handler
+(ns record-parser.record-controller
   (:require [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
@@ -13,32 +13,34 @@
    :headers {"Content-Type" "application/javascript"}
    :body body})
 
+(defn parsed-records [file-path]
+  (-> file-path
+      (slurp)
+      (parser/build-user-records)))
+
 (defn handle-gender-records [file-path]
-  (let [raw-records (slurp file-path)
-        parsed-records (parser/build-user-records raw-records)
-        sorted-records (presenter/sort-records-by-gender parsed-records)]
+  (let [parsed-records (parsed-records file-path)]
     (handle-json-response
-      (presenter/present-records sorted-records))))
+      (core/present-records-sorted-by-gender parsed-records))))
 
 (defn handle-name-records [file-path]
-  (let [raw-records (slurp file-path)
-        parsed-records (parser/build-user-records raw-records)
-        sorted-records (presenter/sort-records-by-lastname parsed-records)]
+  (let [parsed-records (parsed-records file-path)]
     (handle-json-response
-      (presenter/present-records sorted-records))))
+      (core/present-records-sorted-by-lastname parsed-records))))
 
 (defn handle-birthdate-records [file-path]
-  (let [raw-records (slurp file-path)
-        parsed-records (parser/build-user-records raw-records)
-        sorted-records (presenter/sort-records-by-birthdate parsed-records)]
+  (let [parsed-records (parsed-records file-path)]
     (handle-json-response
-      (presenter/present-records sorted-records))))
+      (core/present-records-sorted-by-birthdate parsed-records))))
 
 (defn create-record [file-path raw-record]
   (let [add-newline (spit file-path "\n" :append true)]
-    (spit file-path raw-record :append true)))
+    (spit file-path raw-record :append true))
+  {:status 201
+   :headers {"Content-Type" "application/javascript"}
+   :body "Record creation successful!"})
 
-(defroutes app-routes
+(defroutes record-handler
   (GET "/records/gender"
        request
        (handle-gender-records records-filepath))
@@ -62,4 +64,4 @@
   (route/not-found "Not Found"))
 
 (def app
-  (wrap-defaults app-routes api-defaults))
+  (wrap-defaults record-handler api-defaults))

@@ -4,26 +4,30 @@
             [clojure.java.io :as io]))
 
 (describe "core"
-  (it "reads contents from file, given a file path"
-    (let [file-path "test-file.txt"
-          _ (spit file-path "test file contents")]
-      (should= (c/read-file file-path)
-               "test file contents")
-      (io/delete-file file-path)))
+  (it "presents records sorted by gender"
+    (let [parsed-records [{:gender "Female"}
+                          {:gender "Male"}
+                          {:gender "Female"}]]
+      (should= "{:gender \"Female\"}\n{:gender \"Female\"}\n{:gender \"Male\"}\n"
+               (c/present-records-sorted-by-gender parsed-records))))
 
-  (it "reads contents from test-file-2, given a file path"
-    (let [file-path "test-file-2.txt"
-          _ (spit file-path "second test file contents")]
-      (should= (c/read-file file-path)
-               "second test file contents")
-      (io/delete-file file-path)))
+  (it "presents records sorted by lastname & gender - ascending"
+    (let [parsed-records [{:last-name "Granger"
+                          :gender "Female"}
+                         {:last-name "Potter"
+                          :gender "Male"}
+                         {:last-name "Lestrange"
+                          :gender "Female"}
+                         {:last-name "Black"
+                          :gender "Male"}]]
+      (should= "{:last-name \"Potter\",\n :gender \"Male\"}\n{:last-name \"Lestrange\",\n :gender \"Female\"}\n{:last-name \"Granger\",\n :gender \"Female\"}\n{:last-name \"Black\",\n :gender \"Male\"}\n"
+               (c/present-records-sorted-by-lastname parsed-records))))
 
-  (it "reads raw records from a file and returns the parsed result"
-    (let [file-path "fixtures/test-records.txt"]
-      (should= (first (c/parse-records file-path))
-               {:last-name "Potter"
-                :first-name "Harry"
-                :gender "Male"
-                :favorite-color "Blue"
-                :birthdate "01/05/1982"})))
+  (it "presents records sorted by birthdate - ascending"
+    (let [parsed-records [{:birthdate "12/1/1990"}
+                          {:birthdate "06/05/2005"}
+                          {:birthdate "11/05/1989"}]]
+      (should= "{:birthdate \"06/05/2005\"}\n{:birthdate \"12/01/1990\"}\n{:birthdate \"11/05/1989\"}\n"
+               (c/present-records-sorted-by-birthdate parsed-records))))
+
 )

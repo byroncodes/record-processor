@@ -13,5 +13,5 @@
                                   [ring/ring-mock "0.3.0"]]}}
   :plugins [[speclj "3.3.2"]
             [lein-ring "0.12.1"]]
-  :ring {:handler record-parser.handler/app}
+  :ring {:handler record-parser.record-controller/app}
   :test-paths ["spec"])

@@ -61,5 +61,4 @@
                  :birthdate "4/5/1992"}]
                (p/build-user-records raw-records-string))))
 
-
   )

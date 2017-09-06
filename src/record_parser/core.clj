@@ -3,27 +3,25 @@
             [clojure.string :as str]
             [record-parser.presenter :as presenter]))
 
-(defn read-file [file-path]
-  (slurp file-path))
+(defn present-records-sorted-by-gender [parsed-records]
+  (let [sorted-records (presenter/sort-records-by-gender parsed-records)]
+    (presenter/present-records sorted-records)))
 
-(defn parse-records [file-path]
-  (let [raw-records (read-file file-path)
+(defn present-records-sorted-by-lastname [parsed-records]
+  (let [sorted-records (presenter/sort-records-by-lastname parsed-records)]
+    (presenter/present-records sorted-records)))
+
+(defn present-records-sorted-by-birthdate [parsed-records]
+  (let [sorted-records (presenter/sort-records-by-birthdate parsed-records)]
+    (presenter/present-records sorted-records)))
+
+(defn print-records [file-path]
+  (let [raw-records (slurp file-path)
         parsed-records (parser/build-user-records raw-records)]
-    parsed-records))
-
-(defn records-sorted-by-gender [file-path]
-  (let [parsed-records (parse-records file-path)
-        sorted-by-gender (presenter/sort-records-by-gender parsed-records)]
-    (apply println "Sorted By Gender: \n"
-           sorted-by-gender)))
-
-(defn records-sorted-by-name [file-path]
-  (let [parsed-records (parse-records file-path)
-        sorted-by-lastname (presenter/sort-records-by-lastname parsed-records)]
-    (apply println "Sorted By Last Name: \n"
-           (presenter/present-records sorted-by-lastname))))
+    (println (present-records-sorted-by-gender parsed-records))
+    (println (present-records-sorted-by-lastname parsed-records))
+    (println (present-records-sorted-by-birthdate parsed-records))))
 
 (defn -main [& args]
   (let [file-path (first args)]
-    (records-sorted-by-gender file-path)
-    (records-sorted-by-name file-path)))
+    (print-records file-path)))

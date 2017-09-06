@@ -1,10 +1,16 @@
-(ns record-parser.handler-spec
+(ns record-parser.record-controller-spec
   (:require [speclj.core :refer :all]
             [ring.mock.request :as mock]
-            [record-parser.handler :refer :all]
+            [record-parser.record-controller :refer :all]
             [clojure.java.io :as io]))
 
-(describe "handler"
+(describe "record-controller"
+  (context "route/not-found"
+    (it "returns 'Not Found' with a status 404 for an invalid route"
+      (let [response (app (mock/request :get "/invalid-route"))]
+        (should= (:status response) 404)
+        (should= (:body response) "Not Found"))))
+
   (context "/"
     (it "returns a 200 when response is successful"
       (let [response (app (mock/request :get "/"))]
@@ -47,7 +53,7 @@
             response (app (mock/request :post "/records" {:raw-record "Potter | Harry | Male | Blue | 01/05/1982"
                                                           :file-path file-path}))]
         (should= (slurp file-path) "\nPotter | Harry | Male | Blue | 01/05/1982")
-        (should= (:status response) 404)
+        (should= (:status response) 201)
       (io/delete-file file-path)))
 
     (it "appends a raw-record to a document with existing records"
@@ -56,7 +62,6 @@
             response (app (mock/request :post "/records" {:raw-record "Granger | Hermione | Female | Green | 12/05/1982"
                                                           :file-path file-path}))]
         (should= (slurp file-path) "Potter | Harry | Male | Blue | 01/05/1982\nGranger | Hermione | Female | Green | 12/05/1982")
-        (should= (:status response) 404)
+        (should= (:status response) 201)
       (io/delete-file file-path))))
-
   )
